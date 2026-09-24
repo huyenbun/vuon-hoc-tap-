@@ -1,0 +1,580 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vườn Học Tập</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F2E8; --panel:#FFFFFF; --ink:#1E2A20; --evergreen:#1F3A2E; --sage:#7C9473;
+  --soil:#8B6B4A; --gold:#C99A3B; --line:#E3DBC6; --warn:#B8483A;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#141A15;--panel:#1D251E;--ink:#EAEAE0;--line:#2E362E;}
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0 0 6px;letter-spacing:-.01em}
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+@media(max-width:760px){.layout{grid-template-columns:1fr}}
+.sidebar{background:var(--evergreen);color:#F1EEE2;padding:28px 18px;display:flex;flex-direction:column;gap:4px}
+.sidebar h1{font-size:1.3rem;color:#fff;margin-bottom:2px}
+.sidebar .tagline{font-size:.78rem;color:#B9C9B4;margin-bottom:24px;font-style:italic}
+.navitem{padding:11px 12px;border-radius:8px;cursor:pointer;font-size:.92rem;font-weight:500;display:flex;align-items:center;gap:10px;color:#DCE6D6}
+.navitem:hover{background:rgba(255,255,255,.08)}
+.navitem.active{background:var(--gold);color:#2B2107}
+.main{padding:28px 30px 60px;max-width:920px}
+@media(max-width:760px){.main{padding:20px 16px 50px}.sidebar{padding:16px}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+.grid2{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.timer-display{font-size:3.2rem;font-family:Fraunces,serif;color:var(--evergreen);text-align:center;margin:6px 0 14px;font-variant-numeric:tabular-nums}
+.btnrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+button{font-family:Inter,inherit;font-size:.88rem;font-weight:600;padding:10px 18px;border-radius:9px;border:1px solid var(--evergreen);background:var(--evergreen);color:#fff;cursor:pointer;transition:transform .08s ease}
+button:active{transform:scale(.97)}
+button.secondary{background:transparent;color:var(--evergreen)}
+button.warn{background:var(--warn);border-color:var(--warn)}
+button.gold{background:var(--gold);border-color:var(--gold);color:#2B2107}
+button:disabled{opacity:.4;cursor:not-allowed}
+video{width:100%;border-radius:10px;background:#000;max-height:210px;object-fit:cover}
+.garden{display:flex;align-items:flex-end;gap:10px;min-height:110px;padding:10px 4px;overflow-x:auto}
+.plant{font-size:2rem;text-align:center;line-height:1}
+.plant small{display:block;font-size:.62rem;color:var(--sage)}
+.leader{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+.leader:last-child{border-bottom:none}
+.leader .name{font-weight:600}
+.leader .you{color:var(--evergreen)}
+.alert-banner{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;background:var(--warn);color:#fff;text-align:center;padding:10px;font-weight:600;font-size:.88rem;z-index:50;display:none}
+.dict-row{display:flex;gap:8px}
+.dict-result{margin-top:12px;font-size:.92rem;line-height:1.6;display:flex;align-items:center;gap:10px}
+input[type=text]{padding:10px 13px;border-radius:9px;border:1px solid var(--line);font-size:.9rem;width:100%;background:var(--bg);color:var(--ink)}
+.calc{max-width:280px;margin:0 auto}
+.calc-screen{background:var(--evergreen);color:#fff;font-size:1.6rem;text-align:right;padding:14px;border-radius:9px;margin-bottom:10px;font-family:Fraunces,serif;min-height:1.2em;word-break:break-all}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.calc-grid button{padding:14px 0;background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+.calc-grid button.op{background:var(--gold);color:#2B2107;border-color:var(--gold)}
+.calc-grid button.eq{background:var(--evergreen);color:#fff}
+.muted{color:var(--sage);font-size:.84rem}
+.stat-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+.stat{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:8px 14px;font-size:.83rem}
+.stat b{display:block;font-family:Fraunces,serif;font-size:1.25rem;color:var(--evergreen)}
+.iconbtn{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--evergreen);color:#fff;border:none;cursor:pointer;font-size:1rem}
+.sound-tile{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:var(--bg)}
+.sound-tile .label{font-weight:600;font-size:.92rem}
+input[type=range]{accent-color:var(--gold);width:110px}
+.fab{position:fixed;bottom:22px;right:22px;width:56px;height:56px;border-radius:50%;background:var(--gold);color:#2B2107;border:none;font-size:1.3rem;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;z-index:60}
+.lookup-panel{position:fixed;bottom:88px;right:22px;width:320px;max-width:88vw;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.2);display:none;z-index:60}
+.lookup-panel.open{display:block}
+.lookup-answer{margin-top:10px;font-size:.87rem;line-height:1.55;max-height:220px;overflow-y:auto;white-space:pre-wrap}
+.chat-msgs{display:flex;flex-direction:column;gap:10px;max-height:360px;overflow-y:auto;padding:4px 2px;margin-bottom:12px}
+.msg{padding:9px 13px;border-radius:12px;font-size:.9rem;max-width:82%;line-height:1.5}
+.msg.buddy{background:var(--bg);border:1px solid var(--line);align-self:flex-start}
+.msg.me{background:var(--evergreen);color:#fff;align-self:flex-end}
+.buddy-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.buddy-avatar{width:44px;height:44px;border-radius:50%;background:var(--sage);display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+</style>
+</head>
+<body>
+<div class="alert-banner" id="alertBanner">⚠️ Bạn vừa rời khỏi màn hình học! Nhóm của bạn đã được cảnh báo.</div>
+<div class="layout">
+  <nav class="sidebar">
+    <h1>🌱 Vườn Học Tập</h1>
+    <div class="tagline">Học vừa gieo hạt, xao nhãng là cây héo</div>
+    <div class="navitem active" data-tab="timer">⏱ Đồng hồ học</div>
+    <div class="navitem" data-tab="group">👥 Nhóm &amp; Vườn</div>
+    <div class="navitem" data-tab="dict">📖 Từ điển</div>
+    <div class="navitem" data-tab="buddy">🤖 Bạn học ảo</div>
+    <div class="navitem" data-tab="sound">🎧 Nhạc &amp; Tiếng ồn</div>
+    <div class="navitem" data-tab="calc">🧮 Máy tính</div>
+  </nav>
+
+  <main class="main">
+    <!-- TIMER TAB -->
+    <section id="tab-timer">
+      <div class="grid2">
+        <div class="card">
+          <h3>Phiên học của bạn</h3>
+          <div class="timer-display" id="timeDisplay">00:00:00</div>
+          <div class="btnrow">
+            <button id="startBtn">Bắt đầu học</button>
+            <button id="pauseBtn" class="secondary" disabled>Tạm dừng</button>
+            <button id="stopBtn" class="warn" disabled>Kết thúc</button>
+          </div>
+          <div class="stat-row">
+            <div class="stat"><b id="todayMin">0</b>phút hôm nay</div>
+            <div class="stat"><b id="seedCount">0</b>hạt đã gieo</div>
+            <div class="stat"><b id="treeCount">0</b>cây đã lớn</div>
+          </div>
+          <p class="muted" style="margin-top:12px">Cứ mỗi 15 phút học liên tục, bạn gieo 1 hạt. Mỗi 4 hạt, một cây sẽ lớn 🌳. Rời tab hoặc thu nhỏ cửa sổ sẽ tạm dừng đồng hồ và cảnh báo nhóm.</p>
+        </div>
+        <div class="card">
+          <h3>Ghi hình khi học</h3>
+          <video id="preview" autoplay muted playsinline></video>
+          <div class="btnrow" style="margin-top:10px">
+            <button id="camBtn" class="secondary">Bật camera</button>
+            <button id="recBtn" disabled>Ghi hình</button>
+          </div>
+          <div id="recStatus" class="muted" style="margin-top:8px"></div>
+          <div id="downloadArea"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GROUP TAB -->
+    <section id="tab-group" style="display:none">
+      <div class="grid2">
+        <div class="card">
+          <h3>Bảng xếp hạng nhóm "Học Cùng Nhau"</h3>
+          <p class="muted">Dữ liệu mẫu minh hoạ — bản thật cần máy chủ để đồng bộ giữa các bạn trong nhóm.</p>
+          <div id="leaderList"></div>
+        </div>
+        <div class="card">
+          <h3>Vườn chung của nhóm</h3>
+          <div class="garden" id="gardenBox"></div>
+          <p class="muted">Mỗi thành viên góp cây vào vườn chung dựa trên số giờ học. Ai xao nhãng, cây của người đó sẽ héo bớt lá 🍂.</p>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Chat nhóm (mô phỏng)</h3>
+        <div id="chatBox" style="max-height:140px;overflow-y:auto;font-size:.88rem;margin-bottom:8px"></div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="chatInput" placeholder="Nhắn với nhóm...">
+          <button id="chatSend">Gửi</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- DICT TAB -->
+    <section id="tab-dict" style="display:none">
+      <div class="card">
+        <h3>Tra từ điển nhanh</h3>
+        <div class="dict-row">
+          <input type="text" id="dictInput" placeholder="Nhập từ tiếng Anh (vd: study, focus, garden...)">
+        </div>
+        <div class="dict-result" id="dictResult"></div>
+        <p class="muted" style="margin-top:8px">Bấm biểu tượng 🔊 để nghe phát âm (dùng giọng đọc có sẵn của trình duyệt). Bản demo dùng từ điển mẫu nhỏ — bản đầy đủ nên nối API từ điển thật qua backend.</p>
+      </div>
+    </section>
+
+    <!-- BUDDY TAB -->
+    <section id="tab-buddy" style="display:none">
+      <div class="card">
+        <div class="buddy-header">
+          <div class="buddy-avatar">🦉</div>
+          <div>
+            <h3 style="margin:0">Cú Mèo — bạn học ảo</h3>
+            <div class="muted">Hỏi bài, xin lời khuyên, hoặc chỉ cần ai đó động viên khi học một mình</div>
+          </div>
+        </div>
+        <div class="chat-msgs" id="buddyMsgs"></div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="buddyInput" placeholder="Nhắn cho Cú Mèo...">
+          <button id="buddySend">Gửi</button>
+        </div>
+        <p class="muted" id="buddyStatus" style="margin-top:8px"></p>
+      </div>
+    </section>
+
+    <!-- SOUND TAB -->
+    <section id="tab-sound" style="display:none">
+      <div class="card">
+        <h3>Nghe nhạc riêng của bạn</h3>
+        <p class="muted">Vì lý do bảo mật trình duyệt, trang không thể phát nhạc trực tiếp từ internet — hãy chọn một file nhạc trên máy bạn để phát khi học.</p>
+        <input type="file" id="musicFile" accept="audio/*" style="margin:10px 0">
+        <audio id="musicPlayer" controls style="width:100%;display:none"></audio>
+      </div>
+      <div class="card">
+        <h3>Tiếng ồn tập trung (White / Pink / Brown noise)</h3>
+        <p class="muted">Âm thanh được tạo trực tiếp trên trình duyệt, không cần tải file — giúp che tiếng ồn xung quanh khi học.</p>
+        <div class="sound-tile">
+          <span class="label">🤍 White noise</span>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="range" min="0" max="100" value="40" id="volWhite">
+            <button class="gold" data-noise="white">Phát</button>
+          </div>
+        </div>
+        <div class="sound-tile">
+          <span class="label">🌸 Pink noise</span>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="range" min="0" max="100" value="40" id="volPink">
+            <button class="gold" data-noise="pink">Phát</button>
+          </div>
+        </div>
+        <div class="sound-tile">
+          <span class="label">🟤 Brown noise</span>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="range" min="0" max="100" value="40" id="volBrown">
+            <button class="gold" data-noise="brown">Phát</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALC TAB -->
+    <section id="tab-calc" style="display:none">
+      <div class="card calc">
+        <h3 style="text-align:center">Máy tính</h3>
+        <div class="calc-screen" id="calcScreen">0</div>
+        <div class="calc-grid" id="calcGrid"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<button class="fab" id="lookupFab" title="Tra cứu AI">🔍</button>
+<div class="lookup-panel" id="lookupPanel">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <b>Tra cứu nhanh (AI)</b>
+    <button class="secondary" style="padding:4px 10px" id="lookupClose">✕</button>
+  </div>
+  <div style="display:flex;gap:6px;margin-top:10px">
+    <input type="text" id="lookupInput" placeholder="Hỏi bất cứ điều gì...">
+    <button id="lookupSend">Hỏi</button>
+  </div>
+  <div class="lookup-answer" id="lookupAnswer"></div>
+</div>
+
+<script>
+// ---------- STATE ----------
+let seconds = 0, timerId = null, running = false;
+let secondsSinceSeed = 0;
+let seeds = 0, trees = 0;
+
+const timeDisplay = document.getElementById('timeDisplay');
+const startBtn = document.getElementById('startBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const stopBtn = document.getElementById('stopBtn');
+const alertBanner = document.getElementById('alertBanner');
+const gardenBox = document.getElementById('gardenBox');
+
+function fmt(s){
+  const h=String(Math.floor(s/3600)).padStart(2,'0');
+  const m=String(Math.floor((s%3600)/60)).padStart(2,'0');
+  const sec=String(s%60).padStart(2,'0');
+  return `${h}:${m}:${sec}`;
+}
+function tick(){
+  seconds++; secondsSinceSeed++;
+  timeDisplay.textContent = fmt(seconds);
+  document.getElementById('todayMin').textContent = Math.floor(seconds/60);
+  if(secondsSinceSeed >= 15*60){
+    secondsSinceSeed = 0; seeds++;
+    document.getElementById('seedCount').textContent = seeds;
+    if(seeds % 4 === 0){ trees++; document.getElementById('treeCount').textContent = trees; }
+    renderGarden();
+  }
+}
+function renderGarden(){
+  gardenBox.innerHTML='';
+  for(let i=0;i<trees;i++){ gardenBox.innerHTML += `<div class="plant">🌳<small>Cây ${i+1}</small></div>`; }
+  const growingSeeds = seeds - trees*4;
+  for(let i=0;i<growingSeeds;i++){ gardenBox.innerHTML += `<div class="plant">🌱<small>Mầm</small></div>`; }
+  if(trees===0 && growingSeeds===0){ gardenBox.innerHTML = '<span class="muted">Bắt đầu học để gieo hạt đầu tiên...</span>'; }
+}
+renderGarden();
+
+startBtn.onclick = ()=>{
+  running = true; timerId = setInterval(tick,1000);
+  startBtn.disabled=true; pauseBtn.disabled=false; stopBtn.disabled=false;
+};
+pauseBtn.onclick = ()=>{
+  clearInterval(timerId); running=false;
+  startBtn.disabled=false; pauseBtn.disabled=true;
+};
+stopBtn.onclick = ()=>{
+  clearInterval(timerId); running=false;
+  startBtn.disabled=false; pauseBtn.disabled=true; stopBtn.disabled=true;
+};
+
+function flashAlert(){
+  alertBanner.style.display='block';
+  setTimeout(()=>{alertBanner.style.display='none';},4000);
+  addChatMsg('Hệ thống', 'Một thành viên vừa rời khỏi màn hình học ⚠️');
+}
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden && running){ pauseBtn.onclick(); flashAlert(); }
+});
+window.addEventListener('blur', ()=>{
+  if(running){ flashAlert(); }
+});
+
+// ---------- CAMERA / RECORDING ----------
+let camStream = null, mediaRecorder = null, recordedChunks = [];
+const camBtn = document.getElementById('camBtn');
+const recBtn = document.getElementById('recBtn');
+const preview = document.getElementById('preview');
+const recStatus = document.getElementById('recStatus');
+
+camBtn.onclick = async ()=>{
+  try{
+    camStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true});
+    preview.srcObject = camStream;
+    camBtn.disabled = true; recBtn.disabled = false;
+    recStatus.textContent = 'Camera đã bật.';
+  }catch(e){
+    recStatus.textContent = 'Không thể truy cập camera: '+e.message;
+  }
+};
+recBtn.onclick = ()=>{
+  if(!mediaRecorder || mediaRecorder.state==='inactive'){
+    recordedChunks = [];
+    mediaRecorder = new MediaRecorder(camStream);
+    mediaRecorder.ondataavailable = e=>{ if(e.data.size>0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = ()=>{
+      const blob = new Blob(recordedChunks, {type:'video/webm'});
+      const url = URL.createObjectURL(blob);
+      document.getElementById('downloadArea').innerHTML = `<a href="${url}" download="phien-hoc.webm"><button style="margin-top:8px">Tải video phiên học</button></a>`;
+    };
+    mediaRecorder.start();
+    recBtn.textContent = 'Dừng ghi hình';
+    recStatus.textContent = 'Đang ghi hình...';
+  } else {
+    mediaRecorder.stop();
+    recBtn.textContent = 'Ghi hình';
+    recStatus.textContent = 'Đã dừng ghi hình.';
+  }
+};
+
+// ---------- TABS ----------
+document.querySelectorAll('.navitem').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('.navitem').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    ['timer','group','dict','buddy','sound','calc'].forEach(id=>{
+      document.getElementById('tab-'+id).style.display = (id===t.dataset.tab)?'block':'none';
+    });
+  };
+});
+
+// ---------- GROUP MOCK DATA ----------
+const mockFriends = [
+  {name:'Bạn (bạn)', mins:0, isYou:true},
+  {name:'Minh', mins:142},
+  {name:'Lan', mins:98},
+  {name:'Huy', mins:210},
+];
+function renderLeaders(){
+  mockFriends[0].mins = Math.floor(seconds/60);
+  const sorted = [...mockFriends].sort((a,b)=>b.mins-a.mins);
+  document.getElementById('leaderList').innerHTML = sorted.map((f,i)=>
+    `<div class="leader"><span class="name ${f.isYou?'you':''}">${i+1}. ${f.name}</span><span>${f.mins} phút</span></div>`
+  ).join('');
+}
+setInterval(renderLeaders, 2000);
+renderLeaders();
+
+function addChatMsg(who,msg){
+  const box = document.getElementById('chatBox');
+  box.innerHTML += `<div><b>${who}:</b> ${msg}</div>`;
+  box.scrollTop = box.scrollHeight;
+}
+document.getElementById('chatSend').onclick = ()=>{
+  const inp = document.getElementById('chatInput');
+  if(inp.value.trim()){ addChatMsg('Bạn', inp.value.trim()); inp.value=''; }
+};
+addChatMsg('Huy','Cố lên cả nhà ơi, mình đang gieo cây thứ 5 rồi 🌳');
+
+// ---------- MINI DICTIONARY ----------
+const miniDict = {
+  study:'(v) học, nghiên cứu',
+  focus:'(n/v) sự tập trung; tập trung vào',
+  garden:'(n) khu vườn',
+  seed:'(n) hạt giống',
+  tree:'(n) cây',
+  group:'(n) nhóm',
+  timer:'(n) đồng hồ đếm giờ',
+  distract:'(v) làm xao nhãng',
+  break:'(n) giờ giải lao',
+  goal:'(n) mục tiêu',
+};
+document.getElementById('dictInput').addEventListener('input', e=>{
+  const w = e.target.value.trim().toLowerCase();
+  const r = document.getElementById('dictResult');
+  if(!w){ r.innerHTML=''; return; }
+  if(miniDict[w]){
+    r.innerHTML = `<button class="iconbtn" id="speakBtn">🔊</button><span><b>${w}</b>: ${miniDict[w]}</span>`;
+    document.getElementById('speakBtn').onclick = ()=>{
+      const u = new SpeechSynthesisUtterance(w);
+      u.lang='en-US'; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    };
+  } else {
+    r.innerHTML = 'Không tìm thấy trong từ điển mẫu.';
+  }
+});
+
+// ---------- MUSIC PLAYER ----------
+document.getElementById('musicFile').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const player = document.getElementById('musicPlayer');
+  player.src = URL.createObjectURL(file);
+  player.style.display='block';
+  player.play();
+});
+
+// ---------- WHITE / PINK / BROWN NOISE ----------
+let audioCtx = null;
+const noiseNodes = {}; // type -> {source, gain}
+function getCtx(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+
+function makeNoiseBuffer(ctx, type){
+  const bufferSize = 2 * ctx.sampleRate;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  if(type==='white'){
+    for(let i=0;i<bufferSize;i++) data[i] = Math.random()*2-1;
+  } else if(type==='pink'){
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for(let i=0;i<bufferSize;i++){
+      const white = Math.random()*2-1;
+      b0=0.99886*b0+white*0.0555179; b1=0.99332*b1+white*0.0750759;
+      b2=0.96900*b2+white*0.1538520; b3=0.86650*b3+white*0.3104856;
+      b4=0.55000*b4+white*0.5329522; b5=-0.7616*b5-white*0.0168980;
+      data[i] = (b0+b1+b2+b3+b4+b5+b6+white*0.5362)*0.11;
+      b6=white*0.115926;
+    }
+  } else { // brown
+    let last=0;
+    for(let i=0;i<bufferSize;i++){
+      const white = Math.random()*2-1;
+      last = (last + 0.02*white)/1.02;
+      data[i] = last*3.5;
+    }
+  }
+  return buffer;
+}
+document.querySelectorAll('[data-noise]').forEach(btn=>{
+  btn.onclick = ()=>{
+    const type = btn.dataset.noise;
+    const ctx = getCtx();
+    if(noiseNodes[type]){
+      noiseNodes[type].source.stop();
+      delete noiseNodes[type];
+      btn.textContent='Phát';
+      return;
+    }
+    const source = ctx.createBufferSource();
+    source.buffer = makeNoiseBuffer(ctx, type);
+    source.loop = true;
+    const gain = ctx.createGain();
+    const volSlider = document.getElementById('vol'+type[0].toUpperCase()+type.slice(1));
+    gain.gain.value = volSlider.value/100;
+    volSlider.oninput = ()=>{ gain.gain.value = volSlider.value/100; };
+    source.connect(gain).connect(ctx.destination);
+    source.start();
+    noiseNodes[type] = {source, gain};
+    btn.textContent='Dừng';
+  };
+});
+
+// ---------- AI: quick lookup + virtual study buddy ----------
+let sampleFn = null;
+(async ()=>{
+  try{
+    if(window.claude && window.claude.use){
+      sampleFn = await window.claude.use('sample');
+    }
+  }catch(e){ sampleFn = null; }
+})();
+
+const lookupFab = document.getElementById('lookupFab');
+const lookupPanel = document.getElementById('lookupPanel');
+document.getElementById('lookupClose').onclick = ()=> lookupPanel.classList.remove('open');
+lookupFab.onclick = ()=> lookupPanel.classList.toggle('open');
+
+async function askAI(promptText, onChunk){
+  if(!sampleFn){ return 'Tính năng AI chưa khả dụng trên trình xem này.'; }
+  try{
+    const res = await sampleFn(promptText, {
+      onText: ({text})=>{ if(onChunk) onChunk(text); },
+      modelTier: 'quick'
+    });
+    return res.text;
+  }catch(err){
+    if(err && err.code==='not_granted') return 'Bạn cần cho phép sử dụng AI để dùng tính năng này.';
+    if(err && err.code==='rate_limited') return 'Đang có quá nhiều yêu cầu, thử lại sau một chút nhé.';
+    return 'Xin lỗi, có lỗi khi hỏi AI. Thử lại nhé.';
+  }
+}
+
+document.getElementById('lookupSend').onclick = async ()=>{
+  const q = document.getElementById('lookupInput').value.trim();
+  if(!q) return;
+  const ans = document.getElementById('lookupAnswer');
+  ans.textContent = 'Đang tra cứu...';
+  const prompt = `Bạn là công cụ tra cứu nhanh trong một app học tập. Trả lời ngắn gọn, chính xác, dễ hiểu bằng tiếng Việt cho câu hỏi sau:\n\n${q}`;
+  const answer = await askAI(prompt, (partial)=>{ ans.textContent = partial; });
+  ans.textContent = answer;
+};
+document.getElementById('lookupInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') document.getElementById('lookupSend').click();
+});
+
+// Virtual study buddy chat
+let buddyHistory = [];
+function renderBuddy(){
+  const box = document.getElementById('buddyMsgs');
+  box.innerHTML = buddyHistory.map(m=>`<div class="msg ${m.role==='me'?'me':'buddy'}">${m.text}</div>`).join('');
+  box.scrollTop = box.scrollHeight;
+}
+document.getElementById('buddySend').onclick = async ()=>{
+  const inp = document.getElementById('buddyInput');
+  const msg = inp.value.trim();
+  if(!msg) return;
+  buddyHistory.push({role:'me', text: msg});
+  inp.value='';
+  renderBuddy();
+  const status = document.getElementById('buddyStatus');
+  status.textContent = 'Cú Mèo đang trả lời...';
+  const transcript = buddyHistory.map(m=> (m.role==='me'?'Học sinh: ':'Cú Mèo: ')+m.text).join('\n');
+  const prompt = `Bạn là "Cú Mèo", một người bạn học ảo thân thiện, ấm áp, hay động viên, trả lời bằng tiếng Việt, câu trả lời ngắn gọn (2-4 câu). Bạn giúp người học giải đáp thắc mắc bài học, giữ động lực, và nhắc nhở nghỉ ngơi hợp lý khi cần. Đây là đoạn hội thoại đến giờ:\n${transcript}\n\nHãy trả lời tiếp theo với vai trò Cú Mèo:`;
+  buddyHistory.push({role:'buddy', text:''});
+  renderBuddy();
+  const answer = await askAI(prompt, (partial)=>{
+    buddyHistory[buddyHistory.length-1].text = partial;
+    renderBuddy();
+  });
+  buddyHistory[buddyHistory.length-1].text = answer;
+  renderBuddy();
+  status.textContent = '';
+};
+document.getElementById('buddyInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') document.getElementById('buddySend').click();
+});
+buddyHistory.push({role:'buddy', text:'Chào bạn 🦉 Mình là Cú Mèo, bạn học của bạn hôm nay. Bạn đang học môn gì thế?'});
+renderBuddy();
+
+// ---------- CALCULATOR ----------
+const keys = ['7','8','9','÷','4','5','6','×','1','2','3','−','0','.','=','+','C'];
+const calcGrid = document.getElementById('calcGrid');
+let expr = '';
+keys.forEach(k=>{
+  const b = document.createElement('button');
+  b.textContent = k;
+  if(['÷','×','−','+'].includes(k)) b.classList.add('op');
+  if(k==='=') b.classList.add('eq');
+  b.onclick = ()=>{
+    const screen = document.getElementById('calcScreen');
+    if(k==='C'){ expr=''; screen.textContent='0'; return; }
+    if(k==='='){
+      try{
+        const safe = expr.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-');
+        const val = Function('"use strict";return ('+safe+')')();
+        screen.textContent = val;
+        expr = String(val);
+      }catch(e){ screen.textContent='Lỗi'; expr=''; }
+      return;
+    }
+    expr += k;
+    screen.textContent = expr;
+  };
+  calcGrid.appendChild(b);
+});
+</script>
+</body>
+</html>
